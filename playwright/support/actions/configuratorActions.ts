@@ -24,5 +24,22 @@ export function createConfiguratorActions(page: Page) {
       const carImage = page.locator('img[alt^="Velô Sprint"]')
       await expect(carImage).toHaveAttribute('src', src)
     },
+
+    async checkOptional(name: RegExp) {
+      await page.getByRole('checkbox', { name }).check()
+    },
+
+    async uncheckOptional(name: RegExp) {
+      await page.getByRole('checkbox', { name }).uncheck()
+    },
+
+    async goToCheckout() {
+      await page.getByRole('button', { name: 'Monte o Seu' }).click()
+    },
+
+    async expectOrderSummaryTotal(price: string) {
+      await expect(page).toHaveURL(/\/order$/)
+      await expect(page.getByTestId('summary-total-price')).toHaveText(price)
+    },
   }
 }
