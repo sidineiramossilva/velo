@@ -1,6 +1,8 @@
 import { Page, expect } from '@playwright/test'
 
 export function createConfiguratorActions(page: Page) {
+  const optionalCheckbox = (name: string | RegExp) => page.getByRole('checkbox', { name })
+
   return {
     async open() {
       await page.goto('/configure')
@@ -25,21 +27,18 @@ export function createConfiguratorActions(page: Page) {
       await expect(carImage).toHaveAttribute('src', src)
     },
 
-    async checkOptional(name: RegExp) {
-      await page.getByRole('checkbox', { name }).check()
+    async checkOptional(name: string | RegExp) {
+      await expect(optionalCheckbox(name)).toBeVisible()
+      await optionalCheckbox(name).check()
     },
 
-    async uncheckOptional(name: RegExp) {
-      await page.getByRole('checkbox', { name }).uncheck()
+    async uncheckOptional(name: string | RegExp) {
+      await expect(optionalCheckbox(name)).toBeVisible()
+      await optionalCheckbox(name).uncheck()
     },
 
-    async goToCheckout() {
+    async finishConfigurator() {
       await page.getByRole('button', { name: 'Monte o Seu' }).click()
-    },
-
-    async expectOrderSummaryTotal(price: string) {
-      await expect(page).toHaveURL(/\/order$/)
-      await expect(page.getByTestId('summary-total-price')).toHaveText(price)
     },
   }
 }

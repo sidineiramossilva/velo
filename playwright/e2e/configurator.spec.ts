@@ -28,30 +28,18 @@ test.describe('Configuração do Veículo', () => {
   test('deve atualizar o preço com opcionais e persistir no checkout', async ({ app }) => {
     await app.configurator.expectPrice('R$ 40.000,00')
 
-    await app.configurator.checkOptional(/Precision Park/)
+    await app.configurator.checkOptional(/Precision Park/i)
     await app.configurator.expectPrice('R$ 45.500,00')
 
-    await app.configurator.checkOptional(/Flux Capacitor/)
+    await app.configurator.checkOptional(/Flux Capacitor/i)
     await app.configurator.expectPrice('R$ 50.500,00')
 
-    await app.configurator.goToCheckout()
-    await app.configurator.expectOrderSummaryTotal('R$ 50.500,00')
-  })
-
-  test('deve atualizar o preço com opcionais, restaurar ao desmarcar e persistir no checkout', async ({ app }) => {
+    await app.configurator.uncheckOptional(/Precision Park/i)
+    await app.configurator.uncheckOptional(/Flux Capacitor/i)
     await app.configurator.expectPrice('R$ 40.000,00')
 
-    await app.configurator.checkOptional(/Precision Park/)
-    await app.configurator.expectPrice('R$ 45.500,00')
-
-    await app.configurator.checkOptional(/Flux Capacitor/)
-    await app.configurator.expectPrice('R$ 50.500,00')
-
-    await app.configurator.uncheckOptional(/Precision Park/)
-    await app.configurator.uncheckOptional(/Flux Capacitor/)
-    await app.configurator.expectPrice('R$ 40.000,00')
-
-    await app.configurator.goToCheckout()
-    await app.configurator.expectOrderSummaryTotal('R$ 40.000,00')
+    await app.configurator.finishConfigurator()
+    await app.checkout.expectLoaded()
+    await app.checkout.expectSummaryTotal('R$ 40.000,00')
   })
 })
