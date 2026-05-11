@@ -51,12 +51,23 @@ export function createCheckoutActions(page: Page) {
       await page.getByRole('button', { name: method }).click()
     },
 
+    async fillDownPayment(value: string) {
+      await page.getByTestId('input-entry-value').fill(value)
+    },
+
     async acceptTerms() {
       await terms.check()
     },
 
     async submit() {
       await page.getByRole('button', { name: 'Confirmar Pedido' }).click()
+    },
+
+    async expectSuccessPage(statusPedido: string) {
+      await expect(page).toHaveURL(/\/success/)
+      await expect(
+        page.getByRole('heading', { name: statusPedido })
+      ).toBeVisible()
     },
   }
 }
